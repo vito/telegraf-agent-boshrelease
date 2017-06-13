@@ -1,0 +1,112 @@
+---
+name: telegraf-agent
+
+templates:
+  telegraf_ctl: bin/telegraf_ctl
+  telegraf.conf.erb: config/telegraf.conf
+
+packages:
+- telegraf-agent
+
+properties:
+  global_tags:
+    description: |
+      Key-value tags to attach to every emitted metric. By default, 'bosh-job'
+      and 'bosh-deployment' tags will automatically be added.
+    default: {}
+    example: {datacenter: dc1}
+
+  influxdb.url:
+    description: |
+      InfluxDB server to which metrics will be emitted.
+
+  influxdb.database:
+    description: |
+      InfluxDB database to which metrics will be emitted.
+
+  influxdb.username:
+    description: |
+      InfluxDB username for authorizing access.
+    default: ""
+
+  influxdb.password:
+    description: |
+      InfluxDB password for authorizing access.
+    default: ""
+
+  influxdb.insecure_skip_verify:
+    description: |
+      Skip SSL verification when emitting to InfluxDB.
+    default: false
+
+  inputs.postgresql.address:
+    description: |
+      Connection string for emitting PostgreSQL metrics.
+
+  inputs.postgresql.ignored_databases:
+    description: |
+      A list of databases to explicitly ignore.  If not specified,
+      metrics for all databases are gathered. Do NOT use with the
+      'databases' option.
+    default: []
+
+  inputs.postgresql.databases:
+    description: |
+      A list of databases to pull metrics about. If not specified,
+      metrics for all databases are gathered. Do NOT use with the
+      'ignore_databases' option.
+    default: []
+
+  inputs.postgresql_extensible.address:
+    description: |
+      Connection string for emitting PostgreSQL metrics.
+
+  inputs.postgresql_extensible.databases:
+    description: |
+      A list of databases to pull metrics about. If not specified,
+      metrics for all databases are gathered. Do NOT use with the
+      'ignore_databases' option.
+    default: []
+
+  inputs.postgresql_extensible.outputaddress:
+    description: |
+      Value to set as the 'server' tag.
+
+  inputs.postgresql_extensible.queries:
+    description: |
+      An array of objects specifying queries to run whose result will be
+      emitted as metrics.
+
+      The objects are as so:
+
+      - 'measurement' (string): the name of the emitted measurement
+      - 'query' (string): the query to run
+      - 'version' (int): the version prefix of PostgreSQL this
+        requires, e.g. '901' for 9.1.0.
+      - 'withdbname' (bool): whether to append 'IN (databases...)' or
+        'IS NOT NULL' (if 'databases' is empty) to the query
+      - 'tags' (array of strings): names of columns which should be
+        emitted as tags, rather than values
+    default: []
+    example:
+    - measurement: "postgresql background writer"
+      query: "SELECT * FROM pg_stat_bgwriter"
+      version: 901
+    - measurement: "postgresql database statistics"
+      query: "SELECT * FROM pg_stat_database WHERE datname"
+      version: 901
+      withdbname: true
+    - measurement: "postgresql slow queries"
+      query: |
+        SELECT
+          total_time / calls AS avg_time,
+          calls,
+          total_time,
+          rows,
+          100.0 * shared_blks_hit / nullif(shared_blks_hit + shared_blks_read, 0) AS hit_percent,
+          regexp_replace(query, '[\s\t\n]+', ' ', 'g') AS query
+        FROM pg_stat_statements
+        WHERE query NOT LIKE '%EXPLAIN%'
+        ORDER BY avg_time DESC LIMIT 50
+      version: 901
+      tags: ["query"]

@@ -2,10 +2,10 @@
 
 set -e -u -x
 
-RUN_DIR=/var/vcap/sys/run/telegraf
-LOG_DIR=/var/vcap/sys/log/telegraf
-STORE_DIR=/var/vcap/store/telegraf
-PACKAGE_DIR=/var/vcap/packages/telegraf
+RUN_DIR=/var/vcap/sys/run/telegraf-agent
+LOG_DIR=/var/vcap/sys/log/telegraf-agent
+STORE_DIR=/var/vcap/store/telegraf-agent
+PACKAGE_DIR=/var/vcap/packages/telegraf-agent
 PIDFILE=$RUN_DIR/pid
 
 source $PACKAGE_DIR/pid_utils.sh
@@ -13,7 +13,7 @@ source $PACKAGE_DIR/pid_utils.sh
 case $1 in
 
   start)
-    pid_guard $PIDFILE "telegraf"
+    pid_guard $PIDFILE "telegraf-agent"
 
     mkdir -p $RUN_DIR $LOG_DIR $STORE_DIR
     chown -R vcap:vcap $RUN_DIR $LOG_DIR $STORE_DIR
@@ -21,7 +21,7 @@ case $1 in
     echo "$$" > $PIDFILE
 
     exec chpst -u vcap:vcap $PACKAGE_DIR/bin/telegraf \
-      -config=/var/vcap/jobs/telegraf/config/telegraf.conf \
+      -config=/var/vcap/jobs/telegraf-agent/config/telegraf.conf \
       1>>$LOG_DIR/stdout.log \
       2>>$LOG_DIR/stderr.log
 
