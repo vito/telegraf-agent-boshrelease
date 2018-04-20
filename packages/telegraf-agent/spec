@@ -4,5 +4,5 @@ name: telegraf-agent
 dependencies: []
 
 files:
-- telegraf/*.tar.gz # From https://dl.influxdata.com/telegraf/releases/telegraf-1.2.1_linux_amd64.tar.gz
+- telegraf/*.tar.gz # From https://dl.influxdata.com/telegraf/releases/telegraf-1.6.0-static_linux_amd64.tar.gz
 - pid_utils.sh

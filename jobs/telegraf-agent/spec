@@ -110,3 +110,43 @@ properties:
         ORDER BY avg_time DESC LIMIT 50
       version: 901
       tags: ["query"]
+
+  inputs.procstat.pid_file:
+    description: |
+      PID file containing process ID to monitor.
+    example: /var/vcap/sys/run/telegraf-agent/pid
+
+  inputs.procstat.exe:
+    description: |
+      pgrep executable name to use for locating the process to monitor.
+    example: telegraf
+
+  inputs.procstat.pattern:
+    description: |
+      pgrep -f pattern to use for locating the process to monitor.
+    example: telegraf
+
+  inputs.procstat.process_name:
+    description: |
+      Override the process name. By default it is sourced from /proc/<pid>/status.
+    example: telegraf
+
+  inputs.procstat.prefix:
+    description: |
+      Field name prefix.
+    default: ""
+
+  inputs.procstat.pid_tag:
+    description: |
+      Add PID as a tag instead of a field; useful to differentiate between
+      processes whose tags are otherwise the same.  Can create a large number
+      of series, use judiciously.
+    default: false
+
+  inputs.procstat.pid_finder:
+    description: |
+      Method to use when finding process IDs.  Can be one of 'pgrep', or
+      'native'. The pgrep finder calls the pgrep executable in the PATH while
+      the native finder performs the search directly in a manor dependent on
+      the platform.
+    default: native

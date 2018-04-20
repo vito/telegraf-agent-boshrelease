@@ -20,7 +20,7 @@ case $1 in
 
     echo "$$" > $PIDFILE
 
-    exec chpst -u vcap:vcap $PACKAGE_DIR/bin/telegraf \
+    exec $PACKAGE_DIR/telegraf \
       -config=/var/vcap/jobs/telegraf-agent/config/telegraf.conf \
       1>>$LOG_DIR/stdout.log \
       2>>$LOG_DIR/stderr.log
