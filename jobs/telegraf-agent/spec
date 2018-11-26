@@ -8,6 +8,11 @@ templates:
 packages:
 - telegraf-agent
 
+consumes:
+- name: postgres
+  type: database
+  optional: true
+
 properties:
   global_tags:
     description: |

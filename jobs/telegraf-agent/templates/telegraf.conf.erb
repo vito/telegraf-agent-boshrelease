@@ -35,24 +35,56 @@
   pid_finder = "<%= p("inputs.procstat.pid_finder") %>"
 <% end %>
 
-<% if_p("inputs.postgresql.address") do |addr| %>
+<%
+    addr = nil
+    if_p("inputs.postgresql.address") { |addr_p| addr = addr_p }
+    unless addr
+      if_link("postgres") do |postgres_link|
+        host_ip = postgres_link.instances[0].address
+        username = postgres_link.p("databases.roles").first["name"]
+        password = postgres_link.p("databases.roles").first["password"]
+        database = postgres_link.p("databases.databases").first["name"]
+        addr = "postgres://#{username}:#{password}@#{host_ip}/#{database}"
+      end
+    end
+%>
+
+<% if addr %>
 [[inputs.postgresql]]
   address = <%= addr.to_json %>
   ignored_databases = <%= p("inputs.postgresql.ignored_databases").to_json %>
   databases = <%= p("inputs.postgresql.databases").to_json %>
 <% end %>
 
-<% if_p("inputs.postgresql_extensible.address") do |addr| %>
+<%
+    queries = false
+    if_p("inputs.postgresql_extensible.queries") { |query_arr| queries = !query_arr.empty? }
+
+    addr = nil
+    if_p("inputs.postgresql_extensible.address") { |addr_p| addr = addr_p }
+    unless addr
+      if_link("postgres") do |postgres_link|
+        host_ip = postgres_link.instances[0].address
+        username = postgres_link.p("databases.roles").first["name"]
+        password = postgres_link.p("databases.roles").first["password"]
+        database = postgres_link.p("databases.databases").first["name"]
+        addr = "postgres://#{username}:#{password}@#{host_ip}/#{database}"
+      end
+    end
+%>
+
+
+<% if addr && queries %>
 [[inputs.postgresql_extensible]]
   address = <%= addr.to_json %>
   databases = <%= p("inputs.postgresql_extensible.databases").to_json %>
   outputaddress = <%= p("inputs.postgresql_extensible.outputaddress").to_json %>
   <% p("inputs.postgresql_extensible.queries").each do |query| %>
   [[inputs.postgresql_extensible.query]]
-    sqlquery=<%= query["query"].to_json %>
-    version=<%= (query["version"] || 0).to_json %>
-    withdbname=<%= (!!query["withdbname"]).to_json %>
-    tagvalue=<%= (query["tags"] || []).join(",").to_json %>
-    measurement=<%= (query["measurement"] || "").to_json %>
+    sqlquery = <%= query["query"].to_json %>
+    version = <%= (query["version"] || 0).to_json %>
+    withdbname = <%= (!!query["withdbname"]).to_json %>
+    tagvalue = <%= (query["tags"] || []).join(",").to_json %>
+    measurement = <%= (query["measurement"] || "").to_json %>
   <% end %>
 <% end %>
