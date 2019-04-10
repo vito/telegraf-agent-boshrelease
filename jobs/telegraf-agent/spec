@@ -16,6 +16,12 @@ properties:
     default: {}
     example: {datacenter: dc1}
 
+  agent_conf:
+    description: |
+      Add additional properties to configure the agent.
+    default: {}
+    example: {collection: 10s}
+
   influxdb.url:
     description: |
       InfluxDB server to which metrics will be emitted.

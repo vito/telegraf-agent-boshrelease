@@ -4,6 +4,10 @@
 <% p("global_tags").each do |k, v| %>
   <%= k %> = "<%= v %>"
 <% end %>
+[agent]
+<% p("agent_conf").each do |k, v| %>
+  <%= k %> = "<%= v %>"
+<% end %>
 
 [[outputs.influxdb]]
   urls = ["<%= p("influxdb.url") %>"]
