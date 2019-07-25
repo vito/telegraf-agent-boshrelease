@@ -56,3 +56,13 @@
     measurement=<%= (query["measurement"] || "").to_json %>
   <% end %>
 <% end %>
+
+<% if_p("inputs.disk.mount_points") do |mount_points| %>
+[[inputs.disk]]
+  mount_points=<%= mount_points %>
+<% end %>
+
+<% if_p("inputs.net.interfaces") do |ifaces| %>
+[[inputs.net]]
+  interfaces=<%= ifaces %>
+<% end %>

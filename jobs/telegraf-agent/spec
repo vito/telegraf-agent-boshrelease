@@ -150,3 +150,12 @@ properties:
       the native finder performs the search directly in a manor dependent on
       the platform.
     default: native
+
+  inputs.disk.mount_points:
+    description: |
+      The mount points for which disk stats should be collected.
+    default: ["/"]
+
+  inputs.net.interfaces:
+    description: |
+      An array of network interfaces for which stats should be collected.
